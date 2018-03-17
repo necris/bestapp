@@ -1,0 +1,24 @@
+parameters:
+    apiEndpoint: http://jsonplaceholder.typicode.com
+
+services:
+    cliApp:
+        class: \Symfony\Component\Console\Application
+        setup:
+            - add(@processPostCommand)
+            - add(@processUserCommand)
+    processPostCommand: App\Console\ProcessPostCommand
+    processUserCommand: App\Console\ProcessUserCommand
+    - \GuzzleHttp\Client
+    - App\Loader\EntityLoader(%apiEndpoint%)
+    output:
+        class: App\Output\Output
+        setup:
+            - addWriter(@jsonWriter)
+            - addWriter(@xmlWriter)
+            - addWriter(@htmlWriter)
+
+    jsonWriter: App\Output\Writer\JsonWriter
+    xmlWriter: App\Output\Writer\XmlWriter
+    htmlWriter: App\Output\Writer\HtmlWriter
+
