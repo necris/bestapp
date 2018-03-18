@@ -12,7 +12,7 @@ class UrlHelper
      * @param $parameters
      * @return string
      */
-    static function formatParameters($parameters): string
+    public static function formatParameters($parameters): string
     {
         if (count($parameters) == 0) {
             return "";

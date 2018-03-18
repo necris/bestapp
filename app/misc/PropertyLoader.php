@@ -12,13 +12,13 @@ trait PropertyLoader
 
     /**
      * Method is called, when is accessed to unaccessible property and tries to call
-     * load<Property> method to fill it and then returns it value
+     * load<Property> method to fill it and then return value
      * @param $name
      * @return mixed
      */
     public function __get($name)
     {
-        // TODO: check, if property exists
+        // TODO: check, if property exists, throw proper exception
 
         if ($this->$name === null) {
             $loaderMethod = "load" . ucfirst($name);

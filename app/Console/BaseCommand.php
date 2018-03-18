@@ -45,12 +45,11 @@ abstract class BaseCommand extends \Symfony\Component\Console\Command\Command
     }
 
     /**
-     *
      * @throws AppException
      */
     protected function configure(): void
     {
-        throw new AppException("Missing configure section in command");
+        throw new AppException("Missing configure method in command " . self::class);
     }
 
     /**

@@ -21,7 +21,7 @@ class XmlWriter implements IWriter
     {
         $reflection = new ClassType($entity);
         $className = strtolower($reflection->getShortName());
-        $xml .= "<?xml version=\"1.0\"?>" . PHP_EOL;
+        $xml = "<?xml version=\"1.0\"?>" . PHP_EOL;
         $xml .= "<$className>" . PHP_EOL;
         foreach ($reflection->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $pName = $property->getName();
