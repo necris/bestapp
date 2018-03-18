@@ -23,4 +23,7 @@ to download user
  
         docker-compose exec php php index.php user <ID> [post]
         
+
+**All output files are stored in "data" folder.**
+        
 *NOTE: < ID > parameter is required*

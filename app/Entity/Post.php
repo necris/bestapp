@@ -40,7 +40,7 @@ class Post extends BaseEntity
      */
     public $countOfComments;
 
-    protected function loadComments()
+    protected function loadComments(): array
     {
         $objs = $this->entityLoader->load(Comment::class, null, ["postId" => $this->id]);
         $this->countOfComments = count($objs);

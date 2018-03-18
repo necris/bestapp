@@ -2,8 +2,8 @@
 
 namespace App\Loader;
 
-
 use App\Entity\BaseEntity;
+use App\Misc\UrlHelper;
 use GuzzleHttp\Exception\RequestException;
 use Nette\Reflection\ClassType;
 
@@ -14,6 +14,9 @@ class EntityLoader
      */
     private $client;
 
+    /**
+     * @var string
+     */
     private $apiEndpoint;
 
 
@@ -22,75 +25,48 @@ class EntityLoader
      * @param $apiEndpoint
      * @param \GuzzleHttp\Client $client
      */
-    public function __construct($apiEndpoint, \GuzzleHttp\Client $client)
+    public function __construct(string $apiEndpoint, \GuzzleHttp\Client $client)
     {
         $this->client = $client;
         $this->apiEndpoint = $apiEndpoint;
-
-
     }
 
     /**
+     * call api request and return entity
      * @param $class
      * @param null $id
      * @param array $parameters
      * @return BaseEntity|BaseEntity[]
+     * @throws RequestException
      * @throws \ReflectionException
      */
     public function load($class, $id = null, $parameters = [])
     {
         $reflection = new \Nette\Reflection\ClassType($class);
 
-        $url = $this->apiEndpoint . "/" . $this->getEntityCollection($reflection) . "/" . $id . $this->formatParameters($parameters);
-        try {
-            $data = json_decode($this->client->request("GET", $url)->getBody());
-            if ($id == null) {
-                $entities = array();
-                foreach ($data as $r) {
-                    $entities[] = $this->transformToEntity($r, $class);
-                }
-                return $entities;
-            } else {
-                return $this->transformToEntity($data, $class);
+        $url = $this->apiEndpoint . "/" . $this->getEntityCollection($reflection) . "/" . $id . UrlHelper::formatParameters($parameters);
+
+        $data = json_decode($this->client->request("GET", $url)->getBody());
+        if ($id === null) {
+            $entities = [];
+            foreach ($data as $r) {
+                $entities[] = $this->populateEntity($r, $class);
             }
-        } catch (RequestException $e) {
-            if ($id == null) {
-                return [];
-            } else {
-                return null;
-            }
+            return $entities;
+        } else {
+            return $this->populateEntity($data, $class);
         }
-
-
     }
 
     /**
      * @param ClassType $r
      * @return \Nette\Reflection\IAnnotation
      */
-    private function getEntityCollection(ClassType $r)
+    private function getEntityCollection(ClassType $r): string
     {
         return $r->getAnnotation("Collection");
     }
 
-    /**
-     * @param $parameters
-     * @return null|string
-     */
-    private function formatParameters($parameters)
-    {
-        if (count($parameters) == 0) {
-            return null;
-        }
-
-        $formattedParameters = array();
-        foreach ($parameters as $k => $v) {
-            $formattedParameters[] = $k . "=" . urlencode($v);
-        }
-        return "?" . implode("&", $formattedParameters);
-
-
-    }
 
     /**
      * @param $r
@@ -98,7 +74,7 @@ class EntityLoader
      * @return BaseEntity
      * @throws \ReflectionException
      */
-    private function transformToEntity($r, $class)
+    private function populateEntity($r, $class): BaseEntity
     {
         $reflection = new \Nette\Reflection\ClassType($class);
         $e = new $class($this);

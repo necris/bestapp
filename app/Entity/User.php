@@ -52,7 +52,11 @@ class User extends BaseEntity
      */
     public $countOfPosts;
 
-    protected function loadPosts()
+    /**
+     * @return array
+     * @throws \ReflectionException
+     */
+    protected function loadPosts(): array
     {
         $objs = $this->entityLoader->load(Post::class, null, ["userId" => $this->id]);
         $this->countOfPosts = count($objs);

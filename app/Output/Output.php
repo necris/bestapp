@@ -1,17 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: necris
- * Date: 02.03.18
- * Time: 20:38
- */
 
 namespace App\Output;
-
 
 use App\Entity\BaseEntity;
 use App\Output\Writer\IWriter;
 
+/**
+ * Class Output
+ * @package App\Output
+ */
 class Output
 {
 
@@ -25,16 +22,20 @@ class Output
      * @param IWriter $w
      * @return $this
      */
-    public function addWriter(IWriter $w)
+    public function addWriter(IWriter $w): self
     {
         $this->writers[] = $w;
         return $this;
     }
 
-    public function save($dir, BaseEntity $e)
+    /**
+     * @param $dir
+     * @param BaseEntity $e
+     */
+    public function save($dir, BaseEntity $e): void
     {
         $name = uniqid();
-        foreach ($this->writers as $writer){
+        foreach ($this->writers as $writer) {
             $writer->write($e, $dir . "/" . $name);
         }
     }

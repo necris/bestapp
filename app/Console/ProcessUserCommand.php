@@ -2,73 +2,44 @@
 
 namespace App\Console;
 
+use App\Entity\BaseEntity;
 use App\Entity\Collection;
 use App\Entity\User;
-use App\Loader\EntityLoader;
-use App\Output\Output;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class ProcessUserCommand
  * @package App\Console
  */
-class ProcessUserCommand extends \Symfony\Component\Console\Command\Command
+class ProcessUserCommand extends BaseCommand
 {
 
-
-    /**
-     * @var EntityLoader
-     */
-    private $loader;
-
-    /**
-     * @var Output
-     */
-    private $fileOutput;
-
-    /**
-     * ProcessUserCommand constructor.
-     * @param EntityLoader $l
-     * @param Output $
-     * @param $o
-     */
-    public function __construct(EntityLoader $l, Output $o)
-    {
-        $this->loader = $l;
-        $this->fileOutput = $o;
-
-        parent::__construct();
-    }
+    const ATTR_POST = "post";
 
     /**
      *
      */
     protected function configure(): void
     {
+        $this->setEntityClass(User::class);
         $this->setName('user')
             ->setDescription('Parses user from API and saves it to drive');
 
         $this
-            ->addArgument('id', InputArgument::REQUIRED, 'What post ID do you want to download?')
-            ->addArgument('post', InputArgument::OPTIONAL, 'Do you want to count posts?');
+            ->addArgument(self::ATTR_ID, InputArgument::REQUIRED, 'What post ID do you want to download?')
+            ->addArgument(self::ATTR_POST, InputArgument::OPTIONAL, 'Do you want to count posts?');
     }
 
     /**
      * @param InputInterface $input
-     * @param OutputInterface $output
-     * @throws \ReflectionException
+     * @param BaseEntity $e
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function configureObject(InputInterface $input, BaseEntity $e): void
     {
-
-        $user = $this->loader->load(User::class, $input->getArgument('id'));
-        if ($input->getArgument('post') == "post") {
-            $user->posts;
+        if ($input->getArgument(self::ATTR_POST) == self::ATTR_POST) {
+            $e->posts;
         }
-        $this->fileOutput->save(DATA_DIR, $user);
-        $output->writeln("done");
     }
 
 

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Loader\EntityLoader;
+use App\Misc\PropertyLoader;
 
 
 /**
@@ -11,6 +12,8 @@ use App\Loader\EntityLoader;
  */
 abstract class BaseEntity
 {
+
+    use PropertyLoader;
 
     /**
      * @var EntityLoader
@@ -26,19 +29,6 @@ abstract class BaseEntity
         $this->entityLoader = $el;
     }
 
-    /**
-     * @param $name
-     * @return mixed
-     */
-    public function __get($name)
-    {
 
-        if ($this->$name == null) {
-            $loaderMethod = "load" . ucfirst($name);
-            $this->$name = $this->$loaderMethod();
-        }
-        return $this->$name;
-
-    }
 
 }
